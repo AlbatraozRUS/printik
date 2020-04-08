@@ -7,6 +7,9 @@
 ; Call format:
 ;     _printik(const char*, ...);
 ;
+;Entry:
+;   rdi, rsi, rdx, rcx, r8, r9 - arguments of printf() 
+;
 ; Destroy list:
 ; r14 r15 r12 r10 r9 r8 rax cx rdx rsi rdi rbp 
 ;_______________________________________________________________________________
