@@ -1,11 +1,14 @@
 ;_______________________________________________________________________________
 ;Custom version of default printf() in C/C++ written in ASM
 ;
-;	Purpose:
+; Purpose:
 ;    Writes the string by format to the standard output (in console)
 ;
-;Call format:
+; Call format:
 ;     _printik(const char*, ...);
+;
+; Destroy list:
+; r14 r15 r12 r10 r9 r8 rax cx rdx rsi rdi rbp 
 ;_______________________________________________________________________________
 
 global _printik
@@ -78,6 +81,8 @@ who_is_who:
 ;_______________________________________________________________________________
 ; %c 
 ;Convert number to letter
+; Destroy list:
+;   rax rbx rsi rdi rdx r12 r10 r9
 ;_______________________________________________________________________________
 chr:
 
@@ -99,6 +104,8 @@ chr:
 ;_______________________________________________________________________________
 ;%%
 ;Printing "%"
+; Destroy list:
+;   rax rsi rdi r9 r10
 ;_______________________________________________________________________________
 proc:
 
@@ -119,6 +126,8 @@ proc:
 ;_______________________________________________________________________________
 ; %d
 ;Convert number to string in decimal look
+; Destroy list:
+;   rax rbx rcx rsi rdi rdx r12 r10
 ;_______________________________________________________________________________
 dec:
     xor rcx, rcx
@@ -169,6 +178,8 @@ dec:
 ;_______________________________________________________________________________
 ; %h
 ;Convert number to string in hexadecimal look
+; Destroy list:
+;   rax rbx rcx rsi rdi rdx r12 r10 r9
 ;_______________________________________________________________________________
 hex:
   xor rcx, rcx
@@ -220,6 +231,8 @@ hex:
 ;_______________________________________________________________________________
 ; %b
 ;Convert number to string in binary look
+; Destroy list:
+;   rax rbx rcx rsi rdi rdx r12 r11 r10 r9
 ;_______________________________________________________________________________
 
 bin:
@@ -275,6 +288,8 @@ bin:
 ;_______________________________________________________________________________
 ; %s
 ;Convert number to string
+; Destroy list:
+;   rax rbx rsi rdi rdx r12 r10
 ;_______________________________________________________________________________
 
 str:
@@ -298,6 +313,8 @@ str:
 
 ;_______________________________________________________________________________
 ; Printing string wothout specificators
+; Destroy list:
+;   rax rsi rdi rdx
 ;_______________________________________________________________________________
 
 simple_string:        
@@ -323,11 +340,13 @@ rep_sim_str:
 ;         r10 - location address of specificator
 ;       else
 ;         r10 = 0 mark of absense of specificators in string
+;
+; Destroy list:
+;   r10 rbx
 ;_______________________________________________________________________________
 
 global strchr
 strchr:
-  push rbx
   again:
   mov bl, [r10]
 
@@ -341,16 +360,17 @@ strchr:
   jmp again
 
   found:
-  pop rbx
   ret
 
   not_found:
   xor r10,r10
-  pop rbx
   ret
 
 ;_______________________________________________________________________________
 ; Exit  from _printik
+;Entry:
+; r14 - return address
+; r15 - default rbp
 ;_______________________________________________________________________________
 ex:
   pop rax
