@@ -176,8 +176,8 @@ hex:
   add r12, 8
 
 
-  rep_hex:
-  mov rbx, 16
+  rep_hex:        ;converting digit to hexadecimal look
+  mov rbx, 16     ;and transfering ASCI to buffer
   xor rdx, rdx
   div rbx
   cmp rax, rdx
@@ -198,7 +198,7 @@ hex:
 
   end_hex:
 
-  rep_2_hex:
+  rep_2_hex:      ;printing to standart output
   mov rax, 1
   mov rsi, buf
   add rsi, rcx
@@ -218,13 +218,16 @@ hex:
   jmp repeat
 
 ;_______________________________________________________________________________
+; %b
+;Convert number to string in binary look
+;_______________________________________________________________________________
 
 bin:
       mov rax, [rbp + r12]
       add r12, 8
       mov rbx, rax
       mov r9, 63
-    rep_bin:
+    rep_bin:            ;digit determination
       mov rbx, rax
       mov rcx, 64
       sub rcx, r9
@@ -236,7 +239,7 @@ bin:
       je zero
       jmp one
 
-    zero:
+    zero:               ;printing zero
       push rax
       push rcx
       mov rax, 1
@@ -249,7 +252,7 @@ bin:
       dec r9
       jmp rep_bin
 
-    one:
+    one:                ;printing one
       push rax
       push rcx
       mov rax, 1
@@ -269,6 +272,9 @@ bin:
 
       jmp repeat
 
+;_______________________________________________________________________________
+; %s
+;Convert number to string
 ;_______________________________________________________________________________
 
 str:
@@ -291,8 +297,10 @@ str:
     jmp repeat
 
 ;_______________________________________________________________________________
+; Printing string wothout specificators
+;_______________________________________________________________________________
 
-simple_string:
+simple_string:        
   mov rax, 1
   mov rsi, rdi
   mov rdi, 1
@@ -304,6 +312,17 @@ rep_sim_str:
   jne rep_sim_str
   jmp ex
 
+;_______________________________________________________________________________
+; Custom version of strchr() in ASM
+;
+; Entry:
+;       rax - ASCI of symbol  
+;       r10 - address of string
+; Return:
+;       In case of finding
+;         r10 - location address of specificator
+;       else
+;         r10 = 0 mark of absense of specificators in string
 ;_______________________________________________________________________________
 
 global strchr
@@ -331,7 +350,8 @@ strchr:
   ret
 
 ;_______________________________________________________________________________
-
+; Exit  from _printik
+;_______________________________________________________________________________
 ex:
   pop rax
   pop rax
