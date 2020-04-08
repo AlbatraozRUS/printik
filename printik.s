@@ -1,11 +1,20 @@
+;_______________________________________________________________________________
+;Custom version of default printf() in C/C++ written in ASM
+;
+;	Purpose:
+;    Writes the string by format to the standard output (in console)
+;
+;Call format:
+;     _printik(const char*, ...);
+;_______________________________________________________________________________
+
 global _printik
 section .text
-
 _printik:
-  pop r14
-  mov r15, rbp
+  pop r14       ;Saving return address
+  mov r15, rbp  ;Saving default base pointer
 
-  push r9
+  push r9       ;Pushing arguments to work with them in stack
   push r8
   push rcx
   push rdx
@@ -13,19 +22,19 @@ _printik:
   push rdi
   mov rbp, rsp
 
-  mov r10, rdi
+  mov r10, rdi  
   mov r12, 8
 
   repeat:
   mov rax, '%'
   call strchr
 
-  cmp r10, 0
+  cmp r10, 0        ;if there is no more specificators, write the string
   je simple_string
 
 who_is_who:
 
-  mov r9, r10
+  mov r9, r10     ;writting everything before specificator
   sub r9, rdi
 
   push rdi
@@ -42,7 +51,7 @@ who_is_who:
 
   mov rbx, [r10]
 
-  mov al, 'c'
+  mov al, 'c'   ;Determining the required qualifier
   cmp al, bl
   je chr
 
@@ -67,7 +76,9 @@ who_is_who:
   je proc
   
 ;_______________________________________________________________________________
-
+; %c 
+;Convert number to letter
+;_______________________________________________________________________________
 chr:
 
   mov rax, [rbp + r12]
@@ -86,7 +97,9 @@ chr:
   jmp repeat
 
 ;_______________________________________________________________________________
-
+;%%
+;Printing "%"
+;_______________________________________________________________________________
 proc:
 
   mov rax,'%'
@@ -104,7 +117,9 @@ proc:
   jmp repeat
 
 ;_______________________________________________________________________________
-
+; %d
+;Convert number to string in decimal look
+;_______________________________________________________________________________
 dec:
     xor rcx, rcx
     mov rax, [rbp + r12]
@@ -112,7 +127,7 @@ dec:
 
 
     mov rbx, 10
-  rep_dec:
+  rep_dec:            ;convering number to string by pushing to buffer ASCI of digits
     xor rdx, rdx
     div rbx
     cmp rax, rdx
@@ -132,7 +147,7 @@ dec:
 
     end_dec:
 
-    rep_2_dec:
+    rep_2_dec:    ;writting to standart output from buffer
     mov rax, 1
     mov rsi, buf
     add rsi, rcx
@@ -152,7 +167,9 @@ dec:
     jmp repeat
 
 ;_______________________________________________________________________________
-
+; %h
+;Convert number to string in hexadecimal look
+;_______________________________________________________________________________
 hex:
   xor rcx, rcx
   mov rax, [rbp + r12]
